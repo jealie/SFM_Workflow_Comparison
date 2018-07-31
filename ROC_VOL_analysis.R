@@ -4,6 +4,7 @@
 
 
 # This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# Author: Jean Liénard
 #
 # Any results obtained with this code should refer to the following publication:
 # Probst, A., Gatziolis, D., Liénard, J., and Strigul, N., "Intercomparison of photogrammetry software for three-dimensional vegetation modelling", Royal Society Open Science (2018)
