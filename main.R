@@ -7,16 +7,16 @@ source('gitcode/ROC_VOL_analysis.R')
 # LOADS THE MODELS #
 ####################
 
-ref = color.read.ply('~/tmptodelete/mockup_ref.ply', ShowSpecimen = F, addNormals = F)
-recons_names = list('CMPMVS final ply.ply',
-                    'model.ALIGNED_J_CROPPED.ply',
-                    'MVE final ply.ply',
-                    'Photoscan highest final ply.ply',
-                    'Photoscan high final ply.ply',
-                    'Photoscan lowest final ply.ply',
-                    'Photoscan low final ply.ply',
-                    'Photoscan medium final ply.ply',
-                    'SURE final ply_J_REALIGNED_DOWNSCALED_ICP.ply')
+ref = color.read.ply('models/ref.ply', ShowSpecimen = F, addNormals = F)
+recons_names = as.list(paste0('models/', c('CMPMVS.ply',
+                    'CMVS_PMVS.ply',
+                    'MVE.ply',
+                    'Photoscan_highest.ply',
+                    'Photoscan_high.ply',
+                    'Photoscan_lowest.ply',
+                    'Photoscan_low.ply',
+                    'Photoscan_medium.ply',
+                    'SURE.ply')))
 recons_names_human = list('CMPMVS',
                     'CMVS/PMVS',
                     'MVE',
