@@ -1,7 +1,6 @@
 # source the function that allows to read point clouds
-setwd('/media/jean/ntfs/PROJECT_Comparison_Workflow/')
-source('gitcode/helpers.R')
-source('gitcode/ROC_VOL_analysis.R')
+source('helpers.R')
+source('ROC_VOL_analysis.R')
 
 ####################
 # LOADS THE MODELS #
@@ -33,17 +32,16 @@ recons_list = lapply(recons_names, color.read.ply, ShowSpecimen = F, addNormals 
 # ROC CURVES COMPUTATION #
 ##########################
 
-grid_grain = 0.001
-grid_grain_filename = sub('\\.', '_', as.character(grid_grain))
-grid = readRDS(paste0('/media/jean/ext4/simulation_3D_ref/grid_',grid_grain_filename,'.rds'))
-not_ref_indices = readRDS(paste0('/media/jean/ext4/simulation_3D_ref/not_ref_indices_',grid_grain_filename,'.rds'))
+grid_grain = 0.001 # 0.001 for the paper version - increase for quicker processing time
 
 # the following computes the ROC curves for all models (time consuming: ~1 hour for 5 models)
 recons_fpr_tpr = lapply(recons_list, compute_tpr_fpr_grid2, ref, grid_grain=grid_grain, grid=grid, not_ref_indices=not_ref_indices)
 
+# computes the AUC
 auc = sapply(1:length(recons_fpr_tpr), function(i)sum(diff(recons_fpr_tpr[[i]]$fpr)*recons_fpr_tpr[[i]]$tpr[-1]))
 plot_order = order(auc, decreasing = T)
 
+# plot the ROC curves
 plot(1,1,type='n', xlim=c(0,1), ylim=c(0,1), 
      xlab = expression(paste("False Positive Rate ",italic('  (fraction of points that are not in reference cloud)'))),
      ylab = expression(paste("True Positive Rate ",italic('  (fraction of reference cloud recovered)'))),
@@ -60,7 +58,7 @@ for (i in 1:length(recons_fpr_tpr)) {
 legend('bottomright', fill=cols, unlist(recons_names_human)[plot_order], bty='n')
 
 
-## ZOOMED VERSION:
+## Zoom on the most interesting part of the ROC front
 plot(1,1,type='n', xlim=c(0,0.4), ylim=c(0.6,1), 
      xlab = expression(paste("False Positive Rate ",italic('  (fraction of points that are not in reference cloud)'))),
      ylab = expression(paste("True Positive Rate ",italic('  (fraction of reference cloud recovered)'))),
@@ -75,23 +73,19 @@ for (i in 1:length(recons_fpr_tpr)) {
 }
 legend('topleft', fill=cols, unlist(recons_names_human)[plot_order], bty='n')
 
-
-## BARPLOT OF AUC:
-barplot(auc[plot_order], cex.names = 0.75, names.arg = c(unlist(lapply(recons_names_human, function(x)sub(' ', '\n', x)))[plot_order]), ylab = 'AUC (area under the curve)', las=1)
-
-
-saveRDS(recons_fpr_tpr, 'recons_fpr_tpr_001.rds')
+# show AUC values as a bar graph
+bp = barplot(auc[plot_order], cex.names = 0.75, names.arg = c(unlist(lapply(recons_names_human, function(x)sub(' ', '\n', x)))[plot_order]), ylab = 'AUC (area under the curve)', las=1)
+text(bp, auc[plot_order], round(auc[plot_order], digits = 3), xpd=T, adj=c(0.5,2))
 
 
-
-## VOLUME COMPUTATION (~15 minutes for 5 models)
+###################
+# VOLUME ANALYSIS #
+###################
 
 alpha = 0.025 # derived so that the trunk is filled (the largest width of the trunk being 0.022)
 
-# the following computes the volume of the alpha shape for all models (time consuming: ~1 hour for 5 models)
+# the following computes the volume of the alpha shape for all models (time consuming: ~1 hour for 5 models with )
 recons_ref_volumes = lapply(c(recons_list, list(ref)), compute_volume, ref, radius = alpha)
-
-plot.ashape3d(recons_ref_volumes[[1]]$as3d)
 
 # assuming that the tree (0.7 in virtual world) is 4 meters tall:
 scaling_factor = (0.7 * 4)^3
@@ -99,4 +93,3 @@ barplot(sapply(recons_ref_volumes, function(r) {r$vol * scaling_factor})[-10], c
 abline(recons_ref_volumes[[10]]$vol * scaling_factor, 0, lty=2, lwd=2, col='red')
 text(0.5, recons_ref_volumes[[10]]$vol * scaling_factor, 'Reference', col='red', pos = 3,adj=1)
 
-saveRDS(recons_ref_volumes, 'recons_vol_001.rds')

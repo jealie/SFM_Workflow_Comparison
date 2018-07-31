@@ -1,3 +1,7 @@
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# This file contains auxiliary functions to compute the ROC curve and alphashape volume #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
 
 ## FINE-GRID BASED APPROACH TO COMPUTE THE ROC CURVE, BOUNDED ON THE REFERENCE TREE
 compute_tpr_fpr_grid2 = function(recons, ref, grid_grain = 0.001, grid=NULL, not_ref_indices=NULL) {
@@ -19,19 +23,10 @@ compute_tpr_fpr_grid2 = function(recons, ref, grid_grain = 0.001, grid=NULL, not
   
   recons_to_ref = get.knnx(recons_vox[,1:3], ref_vox[,1:3], k=1) # distance from ref to closest recons
   
-  ####grid = as.matrix(expand.grid(apply(ref_vox[,1:3], 2, function(l){seq(min(l),max(l)+1e-9,by=grid_grain)})))
-  ####saveRDS(grid, paste0('/media/jean/ext4/simulation_3D_ref/grid_',grid_grain_filename,'.rds'))
-  if (is.null(grid))
-    grid = readRDS(paste0('/media/jean/ext4/simulation_3D_ref/grid_',grid_grain_filename,'.rds'))
-  ### grid = readRDS(paste0('/media/jean/ext4/simulation_3D_ref/grid_',grid_grain_filename,'.rds'))
-  ### flatgrid = apply(grid, 1, paste0, collapse='')
-  ###saveRDS(flatgrid, paste0('/media/jean/ext4/simulation_3D_ref/flatgrid_',grid_grain_filename,'.rds'))
-  ##flatgrid = readRDS(paste0('/media/jean/ext4/simulation_3D_ref/flatgrid_',grid_grain_filename,'.rds'))
-  #flatref = apply(ref_vox[,1:3], 1, paste0, collapse='')
-  #not_ref_indices = which( (!duplicated(c(flatref, flatgrid)))[(nrow(ref_vox)+1):(nrow(ref_vox)+length(flatgrid))] )
-  #saveRDS(not_ref_indices, paste0('/media/jean/ext4/simulation_3D_ref/not_ref_indices_',grid_grain_filename,'.rds'))
-  if (is.null(not_ref_indices))
-    not_ref_indices = readRDS(paste0('/media/jean/ext4/simulation_3D_ref/not_ref_indices_',grid_grain_filename,'.rds'))
+  grid = as.matrix(expand.grid(apply(ref_vox[,1:3], 2, function(l){seq(min(l),max(l)+1e-9,by=grid_grain)})))
+  flatgrid = apply(grid, 1, paste0, collapse='')
+  flatref = apply(ref_vox[,1:3], 1, paste0, collapse='')
+  not_ref_indices = which( (!duplicated(c(flatref, flatgrid)))[(nrow(ref_vox)+1):(nrow(ref_vox)+length(flatgrid))] )
   
   recons_to_notref = get.knnx(recons_vox[,1:3], grid[not_ref_indices,1:3], k=1) # distance from not-ref to closest recons
   
@@ -61,8 +56,9 @@ compute_tpr_fpr_grid2 = function(recons, ref, grid_grain = 0.001, grid=NULL, not
 
 
 ## ALPHASHAPE BASED APPROACH TO COMPUTE THE VOLUME, BOUNDED ON THE REFERENCE TREE
-compute_volume = function(recons, ref, radius = 0.025) {
+compute_volume = function(recons, ref, radius = 0.025, do_plot=F) {
   require('alphashape3d')
+  require('geometry')
   
   cat('\nComputing the alphashape volume...\n')
   gc()
@@ -85,7 +81,9 @@ compute_volume = function(recons, ref, radius = 0.025) {
   setTxtProgressBar(pb, 4)
   recons_pts=unique(recons_pts)
   as3d = mod_ashape3d(recons_pts, alpha=radius, pert=T)
-  # plot.ashape3d(as3d)
+  if (do_plot) {
+    plot.ashape3d(as3d)
+  }
   
   setTxtProgressBar(pb, 5)
   true_volume = volume_ashape3d(as3d)
