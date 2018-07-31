@@ -1,6 +1,6 @@
 #!/bin/bash
 
-nbpic=40
+nbpic=200
 
 mkdir -p 1080p
 mkdir -p 4K
