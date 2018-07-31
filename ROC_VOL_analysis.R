@@ -3,6 +3,13 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+# Any results obtained with this code should refer to the following publication:
+# Probst, A., Gatziolis, D., Liénard, J., and Strigul, N., "Intercomparison of photogrammetry software for three-dimensional vegetation modelling", Royal Society Open Science (2018)
+#####
+
+
 ## FINE-GRID BASED APPROACH TO COMPUTE THE ROC CURVE, BOUNDED ON THE REFERENCE TREE
 compute_tpr_fpr_grid2 = function(recons, ref, grid_grain = 0.001, grid=NULL, not_ref_indices=NULL) {
   require('VoxR')

@@ -1,3 +1,13 @@
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# This file contains the main script of the quantitative analysis #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+# Any results obtained with this code should refer to the following publication:
+# Probst, A., Gatziolis, D., Liénard, J., and Strigul, N., "Intercomparison of photogrammetry software for three-dimensional vegetation modelling", Royal Society Open Science (2018)
+#####
+
 # source the function that allows to read point clouds
 source('helpers.R')
 source('ROC_VOL_analysis.R')
